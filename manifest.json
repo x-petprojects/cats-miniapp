@@ -1,0 +1,11 @@
+{
+    "name": "Cats",
+    "version": "1.0.0",
+    "description": "Using windows in Chrome",
+    "manifest_version": 3,
+    "author": "Sergey Petrenko",
+    "action":{
+        "default_popup": "index.html",
+        "default_title": "Petproject Miniapp"
+    }
+}
