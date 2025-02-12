@@ -1,6 +1,42 @@
 import { BASE_URL, IMAGE_STYLES, TEXT_STYLES } from "./config.js";
 import { createOrUpdateElement } from "./domUtils.js";
 
+document.addEventListener("DOMContentLoaded", () => {
+    const toggleSwitch = document.getElementById("toggle-switch");
+
+    // Load the initial state from localStorage (or default to OFF)
+    const isFeatureEnabled = JSON.parse(localStorage.getItem("featureEnabled")) || false;
+    toggleSwitch.checked = isFeatureEnabled;
+
+    // Add event listener to handle toggle switch changes
+    toggleSwitch.addEventListener("change", (event) => {
+        const isEnabled = event.target.checked;
+        const state = isEnabled ? "ON" : "OFF";
+
+        // Save the state to localStorage
+        localStorage.setItem("featureEnabled", JSON.stringify(isEnabled));
+
+        // Notify the background script about the state change
+        chrome.runtime.sendMessage({ type: "updateSwitchState", state }, (response) => {
+            if (response && response.success) {
+                console.log(`Background script updated with state: ${state}`);
+            }
+        });
+
+        // Enable or disable the feature
+        if (isEnabled) {
+            fetchData();
+        } else {
+            clearFeature();
+        }
+    });
+
+    // Optionally initialize the feature if it was enabled
+    if (isFeatureEnabled) {
+        fetchData();
+    }
+});
+
 async function fetchData() {
     const randomNumber = getRandomInt(100, 103);
     const url = `${BASE_URL}${randomNumber}`;
@@ -28,4 +64,10 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max1 - min1 + 1) + min1);
 }
 
-fetchData();
+function clearFeature() {
+    // Example: Clear the image and text
+    const imageElement = document.getElementById("cat-image");
+    const textElement = document.getElementById("some-text");
+    if (imageElement) imageElement.remove();
+    if (textElement) textElement.remove();
+}

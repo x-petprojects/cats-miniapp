@@ -4,8 +4,12 @@
     "description": "Using windows in Chrome",
     "manifest_version": 3,
     "author": "Sergey Petrenko",
-    "action":{
+    "action": {
         "default_popup": "index.html",
         "default_title": "Petproject Miniapp"
+    },
+    "permissions": ["storage", "tabs", "scripting", "activeTab"],
+    "background": {
+        "service_worker": "background.js"
     }
 }
