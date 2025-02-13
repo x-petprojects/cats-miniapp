@@ -26,6 +26,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         });
 
         sendResponse({ success: true });
+    } else if (message.type === "updateCustomValue") {
+        const { customValue } = message;
+
+        // Store the custom value in chrome.storage.local
+        chrome.storage.local.set({ customValue }).then(() => {
+            console.log(`Custom value updated to: ${customValue}`);
+        });
+
+        sendResponse({ success: true });
     }
 });
 
@@ -35,6 +44,13 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         const { switchExtention = "OFF" } = await chrome.storage.local.get("switchExtention");
 
         const scriptFunction = switchExtention === "ON" ? console.log('Switch is ON') : console.log('Switch is OFF');
+
+        // Get the custom value from storage
+        // This is just an example; you can modify it to suit your needs
+        chrome.storage.local.get("customValue").then((result) => {
+            const customValue = result.customValue || "";
+            console.log(`Retrieved custom value: ${customValue}`);
+        });
 
         // Uncomment if you want to execute a script on the page
         // chrome.scripting.executeScript({
